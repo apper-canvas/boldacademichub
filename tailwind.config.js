@@ -1,0 +1,90 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        primary: {
+          DEFAULT: "#6B46C1",
+          50: "#F5F3FF",
+          100: "#EDE9FE",
+          200: "#DDD6FE",
+          300: "#C4B5FD",
+          400: "#A78BFA",
+          500: "#8B5CF6",
+          600: "#6B46C1",
+          700: "#553C9A",
+          800: "#4C1D95",
+          900: "#3B1F4F",
+        },
+        secondary: {
+          DEFAULT: "#9F7AEA",
+          50: "#F7F5FF",
+          100: "#EDE5FF",
+          200: "#D4C5FF",
+          300: "#B89AFF",
+          400: "#9F7AEA",
+          500: "#8B5CF6",
+          600: "#7C3AED",
+          700: "#6D28D9",
+          800: "#5B21B6",
+          900: "#4C1D95",
+        },
+        accent: {
+          DEFAULT: "#F59E0B",
+          50: "#FFFBEB",
+          100: "#FEF3C7",
+          200: "#FDE68A",
+          300: "#FCD34D",
+          400: "#FBBF24",
+          500: "#F59E0B",
+          600: "#D97706",
+          700: "#B45309",
+          800: "#92400E",
+          900: "#78350F",
+        },
+        success: "#10B981",
+        warning: "#F59E0B",
+        error: "#EF4444",
+        info: "#3B82F6",
+      },
+      fontFamily: {
+        'display': ['Inter', 'sans-serif'],
+        'body': ['Inter', 'sans-serif'],
+      },
+      fontSize: {
+        'xs': ['0.75rem', '1rem'],
+        'sm': ['0.875rem', '1.25rem'],
+        'base': ['1rem', '1.5rem'],
+        'lg': ['1.25rem', '1.75rem'],
+        'xl': ['1.5rem', '2rem'],
+        '2xl': ['2rem', '2.5rem'],
+      },
+      spacing: {
+        '18': '4.5rem',
+        '72': '18rem',
+        '84': '21rem',
+        '96': '24rem',
+      },
+      animation: {
+        'fadeIn': 'fadeIn 0.2s ease-out',
+        'slideIn': 'slideIn 0.3s ease-out',
+        'bounce': 'bounce 0.5s ease-out',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideIn: {
+          '0%': { transform: 'translateY(-10px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+      },
+    },
+  },
+  plugins: [],
+}

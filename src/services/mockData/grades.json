@@ -1,0 +1,101 @@
+[
+  {
+    "Id": 1,
+    "courseId": 1,
+    "category": "Programming Assignments",
+    "weight": 40,
+    "score": 85,
+    "maxScore": 100,
+    "date": "2024-01-10T00:00:00Z"
+  },
+  {
+    "Id": 2,
+    "courseId": 1,
+    "category": "Exams",
+    "weight": 35,
+    "score": 92,
+    "maxScore": 100,
+    "date": "2024-01-08T00:00:00Z"
+  },
+  {
+    "Id": 3,
+    "courseId": 1,
+    "category": "Quizzes",
+    "weight": 15,
+    "score": 88,
+    "maxScore": 100,
+    "date": "2024-01-05T00:00:00Z"
+  },
+  {
+    "Id": 4,
+    "courseId": 1,
+    "category": "Participation",
+    "weight": 10,
+    "score": 95,
+    "maxScore": 100,
+    "date": "2024-01-03T00:00:00Z"
+  },
+  {
+    "Id": 5,
+    "courseId": 2,
+    "category": "Projects",
+    "weight": 50,
+    "score": 78,
+    "maxScore": 100,
+    "date": "2024-01-09T00:00:00Z"
+  },
+  {
+    "Id": 6,
+    "courseId": 2,
+    "category": "Lab Assignments",
+    "weight": 30,
+    "score": 90,
+    "maxScore": 100,
+    "date": "2024-01-07T00:00:00Z"
+  },
+  {
+    "Id": 7,
+    "courseId": 2,
+    "category": "Exams",
+    "weight": 20,
+    "score": 85,
+    "maxScore": 100,
+    "date": "2024-01-06T00:00:00Z"
+  },
+  {
+    "Id": 8,
+    "courseId": 3,
+    "category": "Documentation",
+    "weight": 25,
+    "score": 92,
+    "maxScore": 100,
+    "date": "2024-01-11T00:00:00Z"
+  },
+  {
+    "Id": 9,
+    "courseId": 3,
+    "category": "Code Quality",
+    "weight": 35,
+    "score": 88,
+    "maxScore": 100,
+    "date": "2024-01-04T00:00:00Z"
+  },
+  {
+    "Id": 10,
+    "courseId": 3,
+    "category": "Team Collaboration",
+    "weight": 20,
+    "score": 95,
+    "maxScore": 100,
+    "date": "2024-01-02T00:00:00Z"
+  },
+  {
+    "Id": 11,
+    "courseId": 3,
+    "category": "Final Project",
+    "weight": 20,
+    "score": 87,
+    "maxScore": 100,
+    "date": "2024-01-01T00:00:00Z"
+  }
+]

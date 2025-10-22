@@ -1,0 +1,82 @@
+[
+  {
+    "Id": 1,
+    "courseId": 1,
+    "dayOfWeek": 1,
+    "startTime": "10:00",
+    "endTime": "11:30",
+    "location": "CS 201"
+  },
+  {
+    "Id": 2,
+    "courseId": 1,
+    "dayOfWeek": 3,
+    "startTime": "10:00",
+    "endTime": "11:30",
+    "location": "CS 201"
+  },
+  {
+    "Id": 3,
+    "courseId": 1,
+    "dayOfWeek": 5,
+    "startTime": "10:00",
+    "endTime": "11:30",
+    "location": "CS 201"
+  },
+  {
+    "Id": 4,
+    "courseId": 2,
+    "dayOfWeek": 2,
+    "startTime": "14:00",
+    "endTime": "15:30",
+    "location": "CS 305"
+  },
+  {
+    "Id": 5,
+    "courseId": 2,
+    "dayOfWeek": 4,
+    "startTime": "14:00",
+    "endTime": "15:30",
+    "location": "CS 305"
+  },
+  {
+    "Id": 6,
+    "courseId": 3,
+    "dayOfWeek": 1,
+    "startTime": "13:00",
+    "endTime": "14:30",
+    "location": "CS 150"
+  },
+  {
+    "Id": 7,
+    "courseId": 3,
+    "dayOfWeek": 3,
+    "startTime": "13:00",
+    "endTime": "14:30",
+    "location": "CS 150"
+  },
+  {
+    "Id": 8,
+    "courseId": 4,
+    "dayOfWeek": 2,
+    "startTime": "09:00",
+    "endTime": "10:30",
+    "location": "CS 220"
+  },
+  {
+    "Id": 9,
+    "courseId": 4,
+    "dayOfWeek": 4,
+    "startTime": "09:00",
+    "endTime": "10:30",
+    "location": "CS 220"
+  },
+  {
+    "Id": 10,
+    "courseId": 5,
+    "dayOfWeek": 5,
+    "startTime": "14:00",
+    "endTime": "16:00",
+    "location": "CS 401"
+  }
+]

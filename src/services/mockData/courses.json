@@ -1,0 +1,67 @@
+[
+  {
+    "Id": 1,
+    "name": "Data Structures & Algorithms",
+    "instructor": "Dr. Sarah Johnson",
+    "schedule": [
+      { "day": "Monday", "time": "10:00 AM - 11:30 AM" },
+      { "day": "Wednesday", "time": "10:00 AM - 11:30 AM" },
+      { "day": "Friday", "time": "10:00 AM - 11:30 AM" }
+    ],
+    "color": "#6B46C1",
+    "credits": 3,
+    "semester": "Fall 2024",
+    "room": "CS 201"
+  },
+  {
+    "Id": 2,
+    "name": "Database Management Systems",
+    "instructor": "Prof. Michael Chen",
+    "schedule": [
+      { "day": "Tuesday", "time": "2:00 PM - 3:30 PM" },
+      { "day": "Thursday", "time": "2:00 PM - 3:30 PM" }
+    ],
+    "color": "#059669",
+    "credits": 4,
+    "semester": "Fall 2024",
+    "room": "CS 305"
+  },
+  {
+    "Id": 3,
+    "name": "Software Engineering",
+    "instructor": "Dr. Emily Rodriguez",
+    "schedule": [
+      { "day": "Monday", "time": "1:00 PM - 2:30 PM" },
+      { "day": "Wednesday", "time": "1:00 PM - 2:30 PM" }
+    ],
+    "color": "#DC2626",
+    "credits": 3,
+    "semester": "Fall 2024",
+    "room": "CS 150"
+  },
+  {
+    "Id": 4,
+    "name": "Computer Networks",
+    "instructor": "Prof. David Kim",
+    "schedule": [
+      { "day": "Tuesday", "time": "9:00 AM - 10:30 AM" },
+      { "day": "Thursday", "time": "9:00 AM - 10:30 AM" }
+    ],
+    "color": "#7C3AED",
+    "credits": 3,
+    "semester": "Fall 2024",
+    "room": "CS 220"
+  },
+  {
+    "Id": 5,
+    "name": "Machine Learning",
+    "instructor": "Dr. Lisa Wang",
+    "schedule": [
+      { "day": "Friday", "time": "2:00 PM - 4:00 PM" }
+    ],
+    "color": "#F59E0B",
+    "credits": 4,
+    "semester": "Fall 2024",
+    "room": "CS 401"
+  }
+]
