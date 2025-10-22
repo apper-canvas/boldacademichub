@@ -275,7 +275,7 @@ const totalCount = courseAssignments.length
               
               const courseGrade = courseGPAs.find(g => parseInt(g.courseId) === course.Id)
               
-              return (
+return (
                 <motion.div
                   key={course.Id}
                   whileHover={{ y: -2, scale: 1.02 }}
@@ -315,6 +315,7 @@ const totalCount = courseAssignments.length
                         {totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0}%
                       </span>
                     </div>
+                  </div>
                   </div>
                 </motion.div>
               )

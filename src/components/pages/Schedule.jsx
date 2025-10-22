@@ -185,7 +185,7 @@ const dayBlocks = scheduleBlocks.filter(block => parseInt(block.day_of_week_c) =
               ...block,
               course: courses.find(c => c.Id === courseId)
             }
-          })).sort((a, b) => a.startTime.localeCompare(b.startTime))
+          }).sort((a, b) => a.startTime.localeCompare(b.startTime))
 
           return (
             <motion.div
