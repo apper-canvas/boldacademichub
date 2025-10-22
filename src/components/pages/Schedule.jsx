@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
-import { format } from "date-fns"
-import { scheduleService } from "@/services/api/scheduleService"
-import { courseService } from "@/services/api/courseService"
-import Loading from "@/components/ui/Loading"
-import Error from "@/components/ui/Error"
-import Empty from "@/components/ui/Empty"
-import ApperIcon from "@/components/ApperIcon"
+import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { format } from "date-fns";
+import { scheduleService } from "@/services/api/scheduleService";
+import { courseService } from "@/services/api/courseService";
+import ApperIcon from "@/components/ApperIcon";
+import Loading from "@/components/ui/Loading";
+import Empty from "@/components/ui/Empty";
+import Error from "@/components/ui/Error";
 
 const Schedule = () => {
   const [scheduleBlocks, setScheduleBlocks] = useState([])
@@ -68,14 +68,15 @@ const Schedule = () => {
   // Fill the grid with course blocks
   scheduleBlocks.forEach(block => {
     const course = courses.find(c => c.Id === block.courseId)
-    if (course && scheduleGrid[block.dayOfWeek]) {
-      const startHour = parseInt(block.startTime.split(":")[0])
-      const endHour = parseInt(block.endTime.split(":")[0])
-      
+const dayOfWeek = parseInt(block.day_of_week_c)
+    if (course && scheduleGrid[dayOfWeek]) {
+      const startHour = parseInt(block.start_time_c.split(":")[0])
+      const endHour = parseInt(block.end_time_c.split(":")[0])
+
       for (let hour = startHour; hour < endHour; hour++) {
         const timeKey = `${hour}:00`
-        if (scheduleGrid[block.dayOfWeek][timeKey] !== undefined) {
-          scheduleGrid[block.dayOfWeek][timeKey] = {
+        if (!scheduleGrid[dayOfWeek][timeKey]) {
+          scheduleGrid[dayOfWeek][timeKey] = {
             ...block,
             course,
             isStart: hour === startHour,
@@ -142,28 +143,27 @@ const Schedule = () => {
                 return (
                   <div key={day.id} className="relative border-l border-gray-100">
                     {blockData && blockData.isStart && (
-                      <motion.div
+<motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: timeIndex * 0.05 }}
                         className="absolute inset-x-1 inset-y-1 rounded-lg p-3 shadow-sm border-l-4 text-white text-sm"
                         style={{ 
-                          backgroundColor: blockData.course.color,
-                          borderLeftColor: blockData.course.color,
+                          backgroundColor: blockData.course.color_c,
+                          borderLeftColor: blockData.course.color_c,
                           height: `${blockData.duration * 60 - 4}px`,
-                          zIndex: 10
                         }}
                       >
-                        <div className="font-semibold line-clamp-2 mb-1">
-                          {blockData.course.name}
+                        <div className="text-sm font-bold text-white mb-1">
+                          {blockData.course.name_c}
                         </div>
-                        <div className="text-xs opacity-90 flex items-center">
+                        <div className="flex items-center text-xs text-white text-opacity-90 mb-1">
                           <ApperIcon name="MapPin" className="w-3 h-3 mr-1" />
-                          {blockData.location}
+                          {blockData.location_c}
                         </div>
-                        <div className="text-xs opacity-90 flex items-center mt-1">
+                        <div className="flex items-center text-xs text-white text-opacity-90">
                           <ApperIcon name="Clock" className="w-3 h-3 mr-1" />
-                          {blockData.startTime} - {blockData.endTime}
+                          {blockData.start_time_c} - {blockData.end_time_c}
                         </div>
                       </motion.div>
                     )}
@@ -178,10 +178,13 @@ const Schedule = () => {
       {/* Schedule List - Mobile */}
       <div className="lg:hidden space-y-4">
         {days.map(day => {
-          const dayBlocks = scheduleBlocks.filter(block => block.dayOfWeek === day.id)
-          const dayBlocksWithCourses = dayBlocks.map(block => ({
-            ...block,
-            course: courses.find(c => c.Id === block.courseId)
+const dayBlocks = scheduleBlocks.filter(block => parseInt(block.day_of_week_c) === day.id)
+          const dayBlocksWithCourses = dayBlocks.map(block => {
+            const courseId = block.course_id_c?.Id || block.course_id_c
+            return {
+              ...block,
+              course: courses.find(c => c.Id === courseId)
+            }
           })).sort((a, b) => a.startTime.localeCompare(b.startTime))
 
           return (
@@ -201,25 +204,25 @@ const Schedule = () => {
                   <div className="space-y-3">
                     {dayBlocksWithCourses.map((block) => (
                       <div
-                        key={block.Id}
+key={block.Id}
                         className="flex items-center gap-4 p-3 rounded-lg border-l-4"
-                        style={{ 
-                          backgroundColor: `${block.course.color}10`,
-                          borderLeftColor: block.course.color
+                        style={{
+                          backgroundColor: `${block.course.color_c}10`,
+                          borderLeftColor: block.course.color_c
                         }}
                       >
                         <div className="flex-1">
                           <h4 className="font-semibold text-gray-900 mb-1">
-                            {block.course.name}
+                            {block.course.name_c}
                           </h4>
-                          <div className="flex items-center text-sm text-gray-600 gap-4">
+                          <div className="flex flex-wrap gap-3 text-sm text-gray-600">
                             <div className="flex items-center">
                               <ApperIcon name="Clock" className="w-4 h-4 mr-1" />
-                              {block.startTime} - {block.endTime}
+                              {block.start_time_c} - {block.end_time_c}
                             </div>
                             <div className="flex items-center">
                               <ApperIcon name="MapPin" className="w-4 h-4 mr-1" />
-                              {block.location}
+                              {block.location_c}
                             </div>
                           </div>
                         </div>
@@ -249,7 +252,7 @@ const Schedule = () => {
         </div>
         <div className="card p-6 text-center">
           <div className="text-3xl font-bold text-accent mb-2">
-            {courses.reduce((total, course) => total + course.credits, 0)}
+{courses.reduce((total, course) => total + (course.credits_c || 0), 0)}
           </div>
           <div className="text-gray-600">Total Credits</div>
         </div>

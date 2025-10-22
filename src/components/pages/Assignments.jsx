@@ -60,38 +60,39 @@ const Assignments = () => {
     let filtered = [...assignments]
 
     // Search filter
-    if (filters.search.trim()) {
+if (filters.search.trim()) {
       const query = filters.search.toLowerCase()
       filtered = filtered.filter(assignment => 
-        assignment.title.toLowerCase().includes(query) ||
-        assignment.description?.toLowerCase().includes(query) ||
-        assignment.type.toLowerCase().includes(query)
+        assignment.title_c?.toLowerCase().includes(query) ||
+        assignment.description_c?.toLowerCase().includes(query) ||
+        assignment.type_c?.toLowerCase().includes(query)
       )
     }
 
     // Course filter
     if (filters.course) {
-      filtered = filtered.filter(assignment => 
-        assignment.courseId === parseInt(filters.course)
-      )
+      filtered = filtered.filter(assignment => {
+        const assignmentCourseId = assignment.course_id_c?.Id || assignment.course_id_c
+        return assignmentCourseId === parseInt(filters.course)
+      })
     }
 
-    // Status filter
+// Status filter
     if (filters.status) {
       filtered = filtered.filter(assignment => 
-        assignment.status === filters.status
+        assignment.status_c === filters.status
       )
     }
 
     // Priority filter
     if (filters.priority) {
       filtered = filtered.filter(assignment => 
-        assignment.priority === filters.priority
+        assignment.priority_c === filters.priority
       )
     }
 
-    // Sort by due date
-    filtered.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+// Sort by due date
+    filtered.sort((a, b) => new Date(a.due_date_c) - new Date(b.due_date_c))
 
     setFilteredAssignments(filtered)
   }
@@ -216,9 +217,9 @@ const Assignments = () => {
               className="w-full sm:w-48"
             >
               <option value="">All Courses</option>
-              {courses.map((course) => (
+{courses.map((course) => (
                 <option key={course.Id} value={course.Id.toString()}>
-                  {course.name}
+                  {course.name_c}
                 </option>
               ))}
             </Select>
@@ -254,7 +255,7 @@ const Assignments = () => {
             <span className="text-sm font-medium text-gray-500">Active filters:</span>
             {filters.course && (
               <Badge variant="info">
-                Course: {courses.find(c => c.Id === parseInt(filters.course))?.name || "Unknown"}
+Course: {courses.find(c => c.Id === parseInt(filters.course))?.name_c || "Unknown"}
               </Badge>
             )}
             {filters.status && <Badge variant="info">Status: {filters.status}</Badge>}
@@ -274,28 +275,28 @@ const Assignments = () => {
 
       {/* Statistics */}
       {assignments.length > 0 && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="card p-4 text-center">
             <div className="text-2xl font-bold text-primary">
-              {assignments.filter(a => a.status === "pending").length}
+              {assignments.filter(a => a.status_c === "pending").length}
             </div>
             <div className="text-sm text-gray-600">Pending</div>
           </div>
           <div className="card p-4 text-center">
             <div className="text-2xl font-bold text-info">
-              {assignments.filter(a => a.status === "in-progress").length}
+              {assignments.filter(a => a.status_c === "in-progress").length}
             </div>
             <div className="text-sm text-gray-600">In Progress</div>
           </div>
           <div className="card p-4 text-center">
             <div className="text-2xl font-bold text-warning">
-              {assignments.filter(a => a.status === "submitted").length}
+              {assignments.filter(a => a.status_c === "submitted").length}
             </div>
             <div className="text-sm text-gray-600">Submitted</div>
           </div>
           <div className="card p-4 text-center">
             <div className="text-2xl font-bold text-success">
-              {assignments.filter(a => a.status === "completed").length}
+              {assignments.filter(a => a.status_c === "completed").length}
             </div>
             <div className="text-sm text-gray-600">Completed</div>
           </div>
@@ -320,8 +321,9 @@ const Assignments = () => {
           animate={{ opacity: 1 }}
           className="space-y-4"
         >
-          {filteredAssignments.map((assignment, index) => {
-            const course = courses.find(c => c.Id === assignment.courseId)
+{filteredAssignments.map((assignment, index) => {
+            const courseId = assignment.course_id_c?.Id || assignment.course_id_c
+            const course = courses.find(c => c.Id === courseId)
             return (
               <motion.div
                 key={assignment.Id}

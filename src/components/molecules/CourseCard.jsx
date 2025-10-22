@@ -7,7 +7,7 @@ const CourseCard = ({ course, onEdit, onDelete }) => {
   const navigate = useNavigate()
 
   const handleViewAssignments = () => {
-    navigate(`/assignments?course=${course.Id}`)
+navigate(`/assignments?course=${course.Id}`)
   }
 
   const handleViewGrades = () => {
@@ -22,28 +22,28 @@ const CourseCard = ({ course, onEdit, onDelete }) => {
     >
       <div 
         className="h-3 bg-gradient-to-r"
-        style={{ 
-          background: `linear-gradient(90deg, ${course.color} 0%, ${course.color}CC 100%)` 
+style={{ 
+          background: `linear-gradient(90deg, ${course.color_c} 0%, ${course.color_c}CC 100%)` 
         }}
-      />
-      <div className="p-6">
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex-1">
+      >
+        <div className="flex-1">
+          <div className="mb-4">
             <h3 className="text-xl font-bold text-gray-900 mb-2 leading-tight">
-              {course.name}
+              {course.name_c}
             </h3>
             <div className="flex items-center text-gray-600 mb-2">
               <ApperIcon name="User" className="w-4 h-4 mr-2" />
-              <span className="text-sm">{course.instructor}</span>
+              <span className="text-sm">{course.instructor_c}</span>
             </div>
             <div className="flex items-center text-gray-600 mb-2">
               <ApperIcon name="MapPin" className="w-4 h-4 mr-2" />
-              <span className="text-sm">{course.room}</span>
+              <span className="text-sm">{course.room_c}</span>
             </div>
             <div className="flex items-center text-gray-600">
               <ApperIcon name="BookOpen" className="w-4 h-4 mr-2" />
-              <span className="text-sm">{course.credits} Credits</span>
+              <span className="text-sm">{course.credits_c} Credits</span>
             </div>
+          </div>
           </div>
           <div className="flex gap-2">
             <Button
@@ -61,14 +61,9 @@ const CourseCard = ({ course, onEdit, onDelete }) => {
           </div>
         </div>
         
-        <div className="space-y-2 mb-6">
-          <h4 className="text-sm font-semibold text-gray-700">Schedule:</h4>
-          {course.schedule.map((slot, index) => (
-            <div key={index} className="flex items-center text-sm text-gray-600">
-              <ApperIcon name="Clock" className="w-3 h-3 mr-2" />
-              <span>{slot.day}: {slot.time}</span>
-            </div>
-          ))}
+<div className="mt-4 pt-4 border-t border-gray-200">
+        <div className="text-sm text-gray-500">
+          <span className="font-medium">Semester:</span> {course.semester_c}
         </div>
 
         <div className="flex gap-2">

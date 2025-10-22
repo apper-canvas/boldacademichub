@@ -1,15 +1,17 @@
-import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
-import { useSearchParams } from "react-router-dom"
-import { gradeService } from "@/services/api/gradeService"
-import { courseService } from "@/services/api/courseService"
-import Button from "@/components/atoms/Button"
-import Select from "@/components/atoms/Select"
-import Loading from "@/components/ui/Loading"
-import Error from "@/components/ui/Error"
-import Empty from "@/components/ui/Empty"
-import ApperIcon from "@/components/ApperIcon"
-import { toast } from "react-toastify"
+import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { useSearchParams } from "react-router-dom";
+import { gradeService } from "@/services/api/gradeService";
+import { courseService } from "@/services/api/courseService";
+import { toast } from "react-toastify";
+import ApperIcon from "@/components/ApperIcon";
+import Select from "@/components/atoms/Select";
+import Button from "@/components/atoms/Button";
+import Courses from "@/components/pages/Courses";
+import Assignments from "@/components/pages/Assignments";
+import Loading from "@/components/ui/Loading";
+import Empty from "@/components/ui/Empty";
+import Error from "@/components/ui/Error";
 
 const Grades = () => {
   const [searchParams] = useSearchParams()
@@ -45,11 +47,12 @@ const Grades = () => {
 
   // Calculate grades for each course
   const courseGrades = {}
-  grades.forEach(grade => {
-    if (!courseGrades[grade.courseId]) {
-      courseGrades[grade.courseId] = []
+grades.forEach(grade => {
+    const courseId = grade.course_id_c?.Id || grade.course_id_c
+    if (!courseGrades[courseId]) {
+      courseGrades[courseId] = []
     }
-    courseGrades[grade.courseId].push(grade)
+    courseGrades[courseId].push(grade)
   })
 
   // Calculate GPA and course averages
@@ -57,7 +60,7 @@ const Grades = () => {
     const course = courses.find(c => c.Id === parseInt(courseId))
     if (!course) return null
 
-    const totalWeight = courseGradeList.reduce((sum, grade) => sum + grade.weight, 0)
+const totalWeight = courseGradeList.reduce((sum, grade) => sum + (grade.weight_c || 0), 0)
     const weightedScore = courseGradeList.reduce((sum, grade) => {
       const percentage = (grade.score / grade.maxScore) * 100
       return sum + (percentage * grade.weight / 100)
@@ -76,8 +79,8 @@ const Grades = () => {
   }).filter(Boolean)
 
   // Calculate overall GPA
-  const totalCredits = courseAverages.reduce((sum, course) => sum + course.course.credits, 0)
-  const totalGradePoints = courseAverages.reduce((sum, course) => sum + (course.gradePoint * course.course.credits), 0)
+const totalCredits = courseAverages.reduce((sum, course) => sum + (course.course.credits_c || 0), 0)
+  const totalGradePoints = courseAverages.reduce((sum, course) => sum + (course.gradePoint * (course.course.credits_c || 0)), 0)
   const overallGPA = totalCredits > 0 ? totalGradePoints / totalCredits : 0
 
   function getLetterGrade(percentage) {
@@ -160,8 +163,8 @@ const Grades = () => {
         >
           <option value="">All Courses</option>
           {courses.map((course) => (
-            <option key={course.Id} value={course.Id.toString()}>
-              {course.name}
+<option key={course.Id} value={course.Id.toString()}>
+              {course.name_c}
             </option>
           ))}
         </Select>
@@ -184,20 +187,20 @@ const Grades = () => {
               transition={{ delay: index * 0.1 }}
               className="card overflow-hidden"
             >
-              {/* Course Header */}
+{/* Course Header */}
               <div className="p-6 border-b border-gray-100">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <div 
                       className="w-4 h-4 rounded-full"
-                      style={{ backgroundColor: courseData.course.color }}
+                      style={{ backgroundColor: courseData.course.color_c }}
                     />
                     <div>
-                      <h2 className="text-xl font-bold text-gray-900">
-                        {courseData.course.name}
+                      <h2 className="text-xl font-bold text-gray-900 mb-1">
+                        {courseData.course.name_c}
                       </h2>
-                      <p className="text-gray-600">
-                        {courseData.course.instructor} • {courseData.course.credits} credits
+                      <p className="text-sm text-gray-600">
+                        {courseData.course.instructor_c} • {courseData.course.credits_c} credits
                       </p>
                     </div>
                   </div>
@@ -214,22 +217,21 @@ const Grades = () => {
                   </div>
                 </div>
               </div>
-
               {/* Grade Breakdown */}
               <div className="p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Grade Breakdown</h3>
                 <div className="space-y-4">
-                  {courseData.grades.map((grade) => {
-                    const percentage = (grade.score / grade.maxScore) * 100
+{courseData.grades.map((grade) => {
+                    const percentage = (grade.score_c / grade.max_score_c) * 100
+                    const isLow = percentage < 70
+                    const isHigh = percentage >= 90
+
                     return (
-                      <div key={grade.Id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between mb-2">
+                      <div key={grade.Id} className="p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
+                        <div className="flex justify-between items-start mb-2">
+                          <div className="flex-1">
                             <span className="font-medium text-gray-900">
-                              {grade.category}
-                            </span>
-                            <span className="text-sm text-gray-500">
-                              {grade.weight}% of total grade
+                              {grade.category_c}
                             </span>
                           </div>
                           <div className="flex items-center gap-4">
@@ -241,7 +243,7 @@ const Grades = () => {
                             </div>
                             <div className="text-right min-w-0">
                               <div className="font-semibold text-gray-900">
-                                {grade.score}/{grade.maxScore}
+{grade.score_c}/{grade.max_score_c}
                               </div>
                               <div className="text-sm text-primary font-medium">
                                 {percentage.toFixed(1)}%
@@ -263,21 +265,21 @@ const Grades = () => {
                       </div>
                       <div className="text-sm text-gray-600">Assignments</div>
                     </div>
-                    <div className="text-center">
+<div className="text-center">
                       <div className="text-2xl font-bold text-success">
-                        {Math.max(...courseData.grades.map(g => (g.score / g.maxScore) * 100)).toFixed(1)}%
+                        {Math.max(...courseData.grades.map(g => (g.score_c / g.max_score_c) * 100)).toFixed(1)}%
                       </div>
-                      <div className="text-sm text-gray-600">Highest</div>
+                      <div className="text-xs text-gray-600 mt-1">Highest</div>
                     </div>
                     <div className="text-center">
                       <div className="text-2xl font-bold text-warning">
-                        {Math.min(...courseData.grades.map(g => (g.score / g.maxScore) * 100)).toFixed(1)}%
+                        {Math.min(...courseData.grades.map(g => (g.score_c / g.max_score_c) * 100)).toFixed(1)}%
                       </div>
-                      <div className="text-sm text-gray-600">Lowest</div>
+                      <div className="text-xs text-gray-600 mt-1">Lowest</div>
                     </div>
                     <div className="text-center">
                       <div className="text-2xl font-bold text-info">
-                        {(courseData.grades.reduce((sum, g) => sum + (g.score / g.maxScore) * 100, 0) / courseData.grades.length).toFixed(1)}%
+                        {(courseData.grades.reduce((sum, g) => sum + (g.score_c / g.max_score_c) * 100, 0) / courseData.grades.length).toFixed(1)}%
                       </div>
                       <div className="text-sm text-gray-600">Average</div>
                     </div>

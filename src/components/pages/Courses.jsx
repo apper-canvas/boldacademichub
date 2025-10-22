@@ -1,15 +1,15 @@
-import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
-import { courseService } from "@/services/api/courseService"
-import CourseCard from "@/components/molecules/CourseCard"
-import CourseModal from "@/components/organisms/CourseModal"
-import SearchBar from "@/components/molecules/SearchBar"
-import Button from "@/components/atoms/Button"
-import Loading from "@/components/ui/Loading"
-import Error from "@/components/ui/Error"
-import Empty from "@/components/ui/Empty"
-import ApperIcon from "@/components/ApperIcon"
-import { toast } from "react-toastify"
+import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { courseService } from "@/services/api/courseService";
+import { toast } from "react-toastify";
+import ApperIcon from "@/components/ApperIcon";
+import Button from "@/components/atoms/Button";
+import CourseModal from "@/components/organisms/CourseModal";
+import Loading from "@/components/ui/Loading";
+import Empty from "@/components/ui/Empty";
+import Error from "@/components/ui/Error";
+import CourseCard from "@/components/molecules/CourseCard";
+import SearchBar from "@/components/molecules/SearchBar";
 
 const Courses = () => {
   const [courses, setCourses] = useState([])
@@ -46,10 +46,10 @@ const Courses = () => {
       setFilteredCourses(courses)
     } else {
       const query = searchQuery.toLowerCase()
-      const filtered = courses.filter(course => 
-        course.name.toLowerCase().includes(query) ||
-        course.instructor.toLowerCase().includes(query) ||
-        course.semester.toLowerCase().includes(query)
+const filtered = courses.filter(course => 
+        course.name_c?.toLowerCase().includes(query) ||
+        course.instructor_c?.toLowerCase().includes(query) ||
+        course.semester_c?.toLowerCase().includes(query)
       )
       setFilteredCourses(filtered)
     }
@@ -134,7 +134,7 @@ const Courses = () => {
         </div>
       </div>
 
-      {/* Statistics */}
+{/* Statistics */}
       {courses.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="card p-4 text-center">
@@ -143,19 +143,19 @@ const Courses = () => {
           </div>
           <div className="card p-4 text-center">
             <div className="text-2xl font-bold text-accent">
-              {courses.reduce((sum, course) => sum + course.credits, 0)}
+              {courses.reduce((sum, course) => sum + (course.credits_c || 0), 0)}
             </div>
-            <div className="text-sm text-gray-600">Total Credits</div>
+            <div className="text-xs text-gray-600 mt-1">Total Credits</div>
           </div>
           <div className="card p-4 text-center">
             <div className="text-2xl font-bold text-success">
-              {new Set(courses.map(c => c.instructor)).size}
+              {new Set(courses.map(c => c.instructor_c)).size}
             </div>
-            <div className="text-sm text-gray-600">Instructors</div>
+            <div className="text-xs text-gray-600 mt-1">Instructors</div>
           </div>
           <div className="card p-4 text-center">
             <div className="text-2xl font-bold text-info">
-              {new Set(courses.map(c => c.semester)).size}
+              {new Set(courses.map(c => c.semester_c)).size}
             </div>
             <div className="text-sm text-gray-600">Semesters</div>
           </div>

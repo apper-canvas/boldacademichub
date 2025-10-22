@@ -1,15 +1,16 @@
-import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
-import { format, isAfter, isBefore, addDays } from "date-fns"
-import { courseService } from "@/services/api/courseService"
-import { assignmentService } from "@/services/api/assignmentService"
-import { gradeService } from "@/services/api/gradeService"
-import StatCard from "@/components/molecules/StatCard"
-import AssignmentCard from "@/components/molecules/AssignmentCard"
-import Loading from "@/components/ui/Loading"
-import Error from "@/components/ui/Error"
-import Empty from "@/components/ui/Empty"
-import { toast } from "react-toastify"
+import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { addDays, format, isAfter, isBefore } from "date-fns";
+import { courseService } from "@/services/api/courseService";
+import { assignmentService } from "@/services/api/assignmentService";
+import { gradeService } from "@/services/api/gradeService";
+import { toast } from "react-toastify";
+import Assignments from "@/components/pages/Assignments";
+import Loading from "@/components/ui/Loading";
+import Empty from "@/components/ui/Empty";
+import Error from "@/components/ui/Error";
+import AssignmentCard from "@/components/molecules/AssignmentCard";
+import StatCard from "@/components/molecules/StatCard";
 
 const Dashboard = () => {
   const [courses, setCourses] = useState([])
@@ -47,8 +48,8 @@ const Dashboard = () => {
     try {
       await assignmentService.updateStatus(assignmentId, newStatus)
       setAssignments(prev => prev.map(assignment => 
-        assignment.Id === assignmentId 
-          ? { ...assignment, status: newStatus }
+assignment.Id === assignmentId 
+          ? { ...assignment, status_c: newStatus }
           : assignment
       ))
       toast.success("Assignment status updated successfully!")
@@ -64,48 +65,79 @@ const Dashboard = () => {
   
   // Calculate dashboard statistics
   const upcomingAssignments = assignments.filter(assignment => {
-    const dueDate = new Date(assignment.dueDate)
-    return isAfter(dueDate, now) && assignment.status !== "completed" && assignment.status !== "submitted"
+const dueDate = new Date(assignment.due_date_c)
+    return isAfter(dueDate, now) && assignment.status_c !== "completed" && assignment.status_c !== "submitted"
   })
 
   const overdueAssignments = assignments.filter(assignment => {
-    const dueDate = new Date(assignment.dueDate)
-    return isBefore(dueDate, now) && assignment.status !== "completed" && assignment.status !== "submitted"
+const dueDate = new Date(assignment.due_date_c)
+    return isBefore(dueDate, now) && assignment.status_c !== "completed" && assignment.status_c !== "submitted"
   })
 
   const dueSoonAssignments = assignments.filter(assignment => {
-    const dueDate = new Date(assignment.dueDate)
-    return isAfter(dueDate, now) && isBefore(dueDate, addDays(now, 7)) && assignment.status !== "completed" && assignment.status !== "submitted"
+const dueDate = new Date(assignment.due_date_c)
+    return isAfter(dueDate, now) && isBefore(dueDate, addDays(now, 7)) && assignment.status_c !== "completed" && assignment.status_c !== "submitted"
   })
 
-  const recentAssignments = [...assignments]
-    .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+const recentAssignments = [...assignments]
+    .sort((a, b) => new Date(a.due_date_c) - new Date(b.due_date_c))
     .slice(0, 6)
 
   // Calculate overall GPA
   const courseGrades = {}
   grades.forEach(grade => {
-    if (!courseGrades[grade.courseId]) {
-      courseGrades[grade.courseId] = []
+const courseId = grade.course_id_c?.Id || grade.course_id_c
+    if (!courseGrades[courseId]) {
+      courseGrades[courseId] = []
     }
-    courseGrades[grade.courseId].push(grade)
+    courseGrades[courseId].push(grade)
   })
 
-  const courseGPAs = Object.entries(courseGrades).map(([courseId, courseGradeList]) => {
-    const totalWeight = courseGradeList.reduce((sum, grade) => sum + grade.weight, 0)
+const courseGPAs = Object.keys(courseGrades).map(courseId => {
+    const courseGradeList = courseGrades[courseId]
+    const totalWeight = courseGradeList.reduce((sum, grade) => sum + (grade.weight_c || 0), 0)
     const weightedScore = courseGradeList.reduce((sum, grade) => {
-      const percentage = (grade.score / grade.maxScore) * 100
-      return sum + (percentage * grade.weight / 100)
+      const maxScore = grade.max_score_c || 100
+      const score = grade.score_c || 0
+      const weight = grade.weight_c || 0
+      const percentage = (score / maxScore) * 100
+      return sum + (percentage * weight / 100)
     }, 0)
     const courseAverage = totalWeight > 0 ? weightedScore / (totalWeight / 100) : 0
     const course = courses.find(c => c.Id === parseInt(courseId))
+    
+    const gradePoint = courseAverage >= 97 ? 4.0 : 
+                      courseAverage >= 93 ? 3.7 :
+                      courseAverage >= 90 ? 3.3 :
+                      courseAverage >= 87 ? 3.0 :
+                      courseAverage >= 83 ? 2.7 :
+                      courseAverage >= 80 ? 2.3 :
+                      courseAverage >= 77 ? 2.0 :
+                      courseAverage >= 73 ? 1.7 :
+                      courseAverage >= 70 ? 1.3 :
+                      courseAverage >= 67 ? 1.0 : 0
+    
+    const letterGrade = courseAverage >= 97 ? "A+" :
+                       courseAverage >= 93 ? "A" :
+                       courseAverage >= 90 ? "A-" :
+                       courseAverage >= 87 ? "B+" :
+                       courseAverage >= 83 ? "B" :
+                       courseAverage >= 80 ? "B-" :
+                       courseAverage >= 77 ? "C+" :
+                       courseAverage >= 73 ? "C" :
+                       courseAverage >= 70 ? "C-" :
+                       courseAverage >= 67 ? "D+" :
+                       courseAverage >= 60 ? "D" : "F"
+    
     return {
-      courseId: parseInt(courseId),
-      courseName: course?.name || "Unknown Course",
-      credits: course?.credits || 3,
-      average: courseAverage
+      courseId,
+      courseName: course?.name_c || "Unknown Course",
+      credits: course?.credits_c || 3,
+      average: courseAverage,
+      gradePoint,
+      letterGrade
     }
-  })
+  });
 
   const totalCredits = courseGPAs.reduce((sum, course) => sum + course.credits, 0)
   const totalGradePoints = courseGPAs.reduce((sum, course) => {
@@ -122,10 +154,9 @@ const Dashboard = () => {
     return sum + (gradePoint * course.credits)
   }, 0)
 
-  const overallGPA = totalCredits > 0 ? totalGradePoints / totalCredits : 0
+const overallGPA = totalCredits > 0 ? totalGradePoints / totalCredits : 0
 
-  const completedAssignments = assignments.filter(a => a.status === "completed").length
-
+  const completedAssignments = assignments.filter(a => a.status_c === "completed" || a.status_c === "submitted").length
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -211,7 +242,8 @@ const Dashboard = () => {
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {recentAssignments.map((assignment) => {
-              const course = courses.find(c => c.Id === assignment.courseId)
+const courseId = assignment.course_id_c?.Id || assignment.course_id_c
+              const course = courses.find(c => c.Id === courseId)
               return (
                 <AssignmentCard
                   key={assignment.Id}
@@ -234,11 +266,14 @@ const Dashboard = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {courses.map((course) => {
-              const courseAssignments = assignments.filter(a => a.courseId === course.Id)
-              const completedCount = courseAssignments.filter(a => a.status === "completed" || a.status === "submitted").length
-              const totalCount = courseAssignments.length
+const courseAssignments = assignments.filter(a => {
+                const assignmentCourseId = a.course_id_c?.Id || a.course_id_c
+                return assignmentCourseId === course.Id
+              })
+              const completedCount = courseAssignments.filter(a => a.status_c === "completed" || a.status_c === "submitted").length
+const totalCount = courseAssignments.length
               
-              const courseGrade = courseGPAs.find(g => g.courseId === course.Id)
+              const courseGrade = courseGPAs.find(g => parseInt(g.courseId) === course.Id)
               
               return (
                 <motion.div
@@ -249,24 +284,22 @@ const Dashboard = () => {
                   <div className="flex items-center justify-between mb-3">
                     <div 
                       className="w-4 h-4 rounded-full"
-                      style={{ backgroundColor: course.color }}
+                      style={{ backgroundColor: course.color_c }}
                     />
-                    <div className="text-right">
-                      <div className="text-sm text-gray-500">{course.credits} credits</div>
+                    <div>
+                      <div className="text-sm text-gray-500">{course.credits_c} credits</div>
                       {courseGrade && (
-                        <div className="text-lg font-bold text-primary">
-                          {courseGrade.average.toFixed(1)}%
+                        <div className="text-2xl font-bold text-primary mt-1">
+                          {courseGrade.letterGrade}
                         </div>
                       )}
                     </div>
                   </div>
-                  
-                  <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
-                    {course.name}
+                  <div className="flex-1">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">
+                    {course.name_c}
                   </h3>
-                  
-                  <p className="text-sm text-gray-600 mb-3">{course.instructor}</p>
-                  
+                  <p className="text-sm text-gray-600 mb-3">{course.instructor_c}</p>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-500">
                       {completedCount}/{totalCount} assignments

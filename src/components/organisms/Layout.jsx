@@ -20,7 +20,7 @@ const Layout = () => {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50">
+<div className="flex h-screen bg-gray-50">
       <Sidebar isOpen={sidebarOpen} onClose={handleSidebarClose} />
       
       <div className="flex flex-col flex-1 overflow-hidden">
@@ -32,6 +32,7 @@ const Layout = () => {
           </div>
         </main>
       </div>
+      <div id="authentication" className="hidden" />
     </div>
   )
 }

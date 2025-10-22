@@ -1,8 +1,12 @@
-import { NavLink } from "react-router-dom"
-import { motion } from "framer-motion"
-import ApperIcon from "@/components/ApperIcon"
+import { NavLink } from "react-router-dom";
+import { motion } from "framer-motion";
+import { useAuth } from "@/layouts/Root";
+import React from "react";
+import ApperIcon from "@/components/ApperIcon";
 
 const Sidebar = ({ isOpen, onClose }) => {
+  const { logout } = useAuth()
+  
   const navigation = [
     { name: "Dashboard", href: "", icon: "LayoutDashboard" },
     { name: "Courses", href: "courses", icon: "BookOpen" },
@@ -33,13 +37,22 @@ const Sidebar = ({ isOpen, onClose }) => {
                   className={({ isActive }) =>
                     `sidebar-link ${isActive ? "active" : ""}`
                   }
-                  end={item.href === ""}
+end={item.href === ""}
                 >
                   <ApperIcon name={item.icon} className="w-5 h-5" />
                   <span className="font-medium">{item.name}</span>
                 </NavLink>
               ))}
             </nav>
+            <div className="px-2 pb-4 mt-auto border-t border-gray-200 pt-4">
+              <button
+                onClick={logout}
+                className="sidebar-link w-full text-red-600 hover:text-red-700 hover:bg-red-50"
+              >
+                <ApperIcon name="LogOut" className="w-5 h-5" />
+<span className="font-medium">Logout</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -94,13 +107,25 @@ const Sidebar = ({ isOpen, onClose }) => {
                   `sidebar-link ${isActive ? "active" : ""}`
                 }
                 onClick={onClose}
-                end={item.href === ""}
+end={item.href === ""}
               >
                 <ApperIcon name={item.icon} className="w-5 h-5" />
                 <span className="font-medium">{item.name}</span>
               </NavLink>
             ))}
           </nav>
+          <div className="px-2 pb-4 mt-auto border-t border-gray-200 pt-4">
+            <button
+              onClick={() => {
+                logout()
+                onClose()
+              }}
+              className="sidebar-link w-full text-red-600 hover:text-red-700 hover:bg-red-50"
+            >
+              <ApperIcon name="LogOut" className="w-5 h-5" />
+              <span className="font-medium">Logout</span>
+            </button>
+          </div>
         </div>
       </motion.div>
     </>

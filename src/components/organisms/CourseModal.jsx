@@ -16,15 +16,15 @@ const CourseModal = ({ isOpen, onClose, onSubmit, course = null }) => {
   })
   const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
+useEffect(() => {
     if (course) {
       setFormData({
-        name: course.name || "",
-        instructor: course.instructor || "",
-        room: course.room || "",
-        credits: course.credits?.toString() || "",
-        semester: course.semester || "Fall 2024",
-        color: course.color || "#6B46C1"
+        name: course.name_c || "",
+        instructor: course.instructor_c || "",
+        room: course.room_c || "",
+        credits: course.credits_c?.toString() || "",
+        semester: course.semester_c || "Fall 2024",
+        color: course.color_c || "#6B46C1"
       })
     } else {
       setFormData({
@@ -43,12 +43,14 @@ const CourseModal = ({ isOpen, onClose, onSubmit, course = null }) => {
     setLoading(true)
     
     try {
-      const courseData = {
-        ...formData,
+const courseData = {
+        name: formData.name,
+        instructor: formData.instructor,
+        room: formData.room,
         credits: parseInt(formData.credits),
-        schedule: [] // This would be set in a separate step or form
+        semester: formData.semester,
+        color: formData.color
       }
-      
       await onSubmit(courseData)
       onClose()
     } catch (error) {

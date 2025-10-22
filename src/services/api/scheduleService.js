@@ -1,53 +1,198 @@
-import scheduleBlocksData from "@/services/mockData/scheduleBlocks.json"
-
-let scheduleBlocks = [...scheduleBlocksData]
-
-const delay = () => new Promise(resolve => setTimeout(resolve, Math.random() * 300 + 200))
+import { getApperClient } from "@/services/apperClient"
+import { toast } from "react-toastify"
 
 export const scheduleService = {
   async getAll() {
-    await delay()
-    return [...scheduleBlocks]
+    try {
+      const apperClient = getApperClient()
+      const response = await apperClient.fetchRecords('schedule_block_c', {
+        fields: [
+          {"field": {"Name": "Id"}},
+          {"field": {"Name": "day_of_week_c"}},
+          {"field": {"Name": "start_time_c"}},
+          {"field": {"Name": "end_time_c"}},
+          {"field": {"Name": "location_c"}},
+          {"field": {"Name": "course_id_c"}}
+        ]
+      })
+
+      if (!response.success) {
+        console.error(response.message)
+        toast.error(response.message)
+        return []
+      }
+
+      return response.data || []
+    } catch (error) {
+      console.error("Error fetching schedule blocks:", error?.response?.data?.message || error)
+      toast.error("Failed to load schedule")
+      return []
+    }
   },
 
   async getById(id) {
-    await delay()
-    const block = scheduleBlocks.find(s => s.Id === parseInt(id))
-    if (!block) throw new Error("Schedule block not found")
-    return { ...block }
+    try {
+      const apperClient = getApperClient()
+      const response = await apperClient.getRecordById('schedule_block_c', parseInt(id), {
+        fields: [
+          {"field": {"Name": "Id"}},
+          {"field": {"Name": "day_of_week_c"}},
+          {"field": {"Name": "start_time_c"}},
+          {"field": {"Name": "end_time_c"}},
+          {"field": {"Name": "location_c"}},
+          {"field": {"Name": "course_id_c"}}
+        ]
+      })
+
+      if (!response.success) {
+        console.error(response.message)
+        toast.error(response.message)
+        throw new Error("Schedule block not found")
+      }
+
+      return response.data
+    } catch (error) {
+      console.error(`Error fetching schedule block ${id}:`, error?.response?.data?.message || error)
+      throw new Error("Schedule block not found")
+    }
   },
 
   async getByCourseId(courseId) {
-    await delay()
-    return scheduleBlocks.filter(s => s.courseId === parseInt(courseId))
+    try {
+      const apperClient = getApperClient()
+      const response = await apperClient.fetchRecords('schedule_block_c', {
+        fields: [
+          {"field": {"Name": "Id"}},
+          {"field": {"Name": "day_of_week_c"}},
+          {"field": {"Name": "start_time_c"}},
+          {"field": {"Name": "end_time_c"}},
+          {"field": {"Name": "location_c"}},
+          {"field": {"Name": "course_id_c"}}
+        ],
+        where: [{
+          FieldName: "course_id_c",
+          Operator: "EqualTo",
+          Values: [parseInt(courseId)]
+        }]
+      })
+
+      if (!response.success) {
+        console.error(response.message)
+        return []
+      }
+
+      return response.data || []
+    } catch (error) {
+      console.error(`Error fetching schedule blocks for course ${courseId}:`, error?.response?.data?.message || error)
+      return []
+    }
   },
 
   async create(scheduleData) {
-    await delay()
-    const maxId = scheduleBlocks.length > 0 ? Math.max(...scheduleBlocks.map(s => s.Id)) : 0
-    const newBlock = {
-      Id: maxId + 1,
-      ...scheduleData
+    try {
+      const apperClient = getApperClient()
+      const response = await apperClient.createRecord('schedule_block_c', {
+        records: [{
+          day_of_week_c: scheduleData.dayOfWeek.toString(),
+          start_time_c: scheduleData.startTime,
+          end_time_c: scheduleData.endTime,
+          location_c: scheduleData.location,
+          course_id_c: parseInt(scheduleData.courseId)
+        }]
+      })
+
+      if (!response.success) {
+        console.error(response.message)
+        toast.error(response.message)
+        throw new Error("Failed to create schedule block")
+      }
+
+      if (response.results) {
+        const failed = response.results.filter(r => !r.success)
+        if (failed.length > 0) {
+          console.error(`Failed to create schedule block: ${JSON.stringify(failed)}`)
+          failed.forEach(record => {
+            if (record.message) toast.error(record.message)
+          })
+          throw new Error("Failed to create schedule block")
+        }
+        return response.results[0].data
+      }
+
+      return response.data
+    } catch (error) {
+      console.error("Error creating schedule block:", error?.response?.data?.message || error)
+      throw error
     }
-    scheduleBlocks.push(newBlock)
-    return { ...newBlock }
   },
 
   async update(id, scheduleData) {
-    await delay()
-    const index = scheduleBlocks.findIndex(s => s.Id === parseInt(id))
-    if (index === -1) throw new Error("Schedule block not found")
-    
-    scheduleBlocks[index] = { ...scheduleBlocks[index], ...scheduleData }
-    return { ...scheduleBlocks[index] }
+    try {
+      const apperClient = getApperClient()
+      const response = await apperClient.updateRecord('schedule_block_c', {
+        records: [{
+          Id: parseInt(id),
+          day_of_week_c: scheduleData.dayOfWeek?.toString(),
+          start_time_c: scheduleData.startTime,
+          end_time_c: scheduleData.endTime,
+          location_c: scheduleData.location,
+          course_id_c: scheduleData.courseId ? parseInt(scheduleData.courseId) : undefined
+        }]
+      })
+
+      if (!response.success) {
+        console.error(response.message)
+        toast.error(response.message)
+        throw new Error("Failed to update schedule block")
+      }
+
+      if (response.results) {
+        const failed = response.results.filter(r => !r.success)
+        if (failed.length > 0) {
+          console.error(`Failed to update schedule block: ${JSON.stringify(failed)}`)
+          failed.forEach(record => {
+            if (record.message) toast.error(record.message)
+          })
+          throw new Error("Failed to update schedule block")
+        }
+        return response.results[0].data
+      }
+
+      return response.data
+    } catch (error) {
+      console.error("Error updating schedule block:", error?.response?.data?.message || error)
+      throw error
+    }
   },
 
   async delete(id) {
-    await delay()
-    const index = scheduleBlocks.findIndex(s => s.Id === parseInt(id))
-    if (index === -1) throw new Error("Schedule block not found")
-    
-    scheduleBlocks.splice(index, 1)
-    return true
+    try {
+      const apperClient = getApperClient()
+      const response = await apperClient.deleteRecord('schedule_block_c', {
+        RecordIds: [parseInt(id)]
+      })
+
+      if (!response.success) {
+        console.error(response.message)
+        toast.error(response.message)
+        return false
+      }
+
+      if (response.results) {
+        const failed = response.results.filter(r => !r.success)
+        if (failed.length > 0) {
+          console.error(`Failed to delete schedule block: ${JSON.stringify(failed)}`)
+          failed.forEach(record => {
+            if (record.message) toast.error(record.message)
+          })
+          return false
+        }
+      }
+
+      return true
+    } catch (error) {
+      console.error("Error deleting schedule block:", error?.response?.data?.message || error)
+      return false
+    }
   }
 }

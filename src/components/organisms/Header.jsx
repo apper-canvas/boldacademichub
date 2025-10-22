@@ -2,9 +2,11 @@ import { useState } from "react"
 import { format } from "date-fns"
 import ApperIcon from "@/components/ApperIcon"
 import Button from "@/components/atoms/Button"
+import { useAuth } from "@/layouts/Root"
 
 const Header = ({ onMenuClick, onQuickAdd }) => {
   const [currentDate] = useState(new Date())
+  const { logout } = useAuth()
 
   return (
     <header className="bg-white border-b border-gray-200 px-4 py-4 lg:px-6">
@@ -34,8 +36,7 @@ const Header = ({ onMenuClick, onQuickAdd }) => {
             </div>
           </div>
         </div>
-
-        <div className="flex items-center gap-3">
+<div className="flex items-center gap-3">
           <Button
             variant="secondary"
             size="sm"
@@ -53,6 +54,15 @@ const Header = ({ onMenuClick, onQuickAdd }) => {
           >
             <span className="hidden sm:inline">Add Assignment</span>
             <span className="sm:hidden">Add</span>
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={logout}
+            icon="LogOut"
+            className="text-red-600 hover:bg-red-50"
+          >
+            <span className="hidden sm:inline">Logout</span>
           </Button>
         </div>
       </div>

@@ -19,17 +19,18 @@ const AssignmentModal = ({ isOpen, onClose, onSubmit, assignment = null, courses
   })
   const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
+useEffect(() => {
     if (assignment) {
-      const dueDate = new Date(assignment.dueDate)
+      const dueDate = new Date(assignment.due_date_c)
+      const courseId = assignment.course_id_c?.Id || assignment.course_id_c
       setFormData({
-        title: assignment.title || "",
-        description: assignment.description || "",
-        courseId: assignment.courseId?.toString() || "",
+        title: assignment.title_c || "",
+        description: assignment.description_c || "",
+        courseId: courseId?.toString() || "",
         dueDate: format(dueDate, "yyyy-MM-dd'T'HH:mm"),
-        priority: assignment.priority || "medium",
-        type: assignment.type || "Assignment",
-        points: assignment.points?.toString() || ""
+        priority: assignment.priority_c || "medium",
+        type: assignment.type_c || "Assignment",
+        points: assignment.points_c?.toString() || ""
       })
     } else {
       setFormData({
@@ -49,12 +50,15 @@ const AssignmentModal = ({ isOpen, onClose, onSubmit, assignment = null, courses
     setLoading(true)
     
     try {
-      const assignmentData = {
-        ...formData,
+const assignmentData = {
+        title: formData.title,
+        description: formData.description,
         courseId: parseInt(formData.courseId),
         dueDate: new Date(formData.dueDate).toISOString(),
         points: parseInt(formData.points),
-        status: assignment?.status || "pending"
+        priority: formData.priority,
+        type: formData.type,
+        status: assignment?.status_c || "pending"
       }
       
       await onSubmit(assignmentData)
@@ -130,9 +134,9 @@ const AssignmentModal = ({ isOpen, onClose, onSubmit, assignment = null, courses
                     required
                   >
                     <option value="">Select a course</option>
-                    {courses.map((course) => (
+{courses.map((course) => (
                       <option key={course.Id} value={course.Id.toString()}>
-                        {course.name}
+                        {course.name_c}
                       </option>
                     ))}
                   </Select>
